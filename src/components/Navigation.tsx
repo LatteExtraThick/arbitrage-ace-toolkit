@@ -1,9 +1,16 @@
 import { Button } from "@/components/ui/button";
-import { Zap, Menu, X } from "lucide-react";
+import { Zap, Menu, X, LogOut } from "lucide-react";
 import { useState } from "react";
+import { Link } from "react-router-dom";
+import { useAuth } from "@/hooks/useAuth";
 
 const Navigation = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { user, signOut } = useAuth();
+
+  const handleSignOut = async () => {
+    await signOut();
+  };
 
   const navItems = [
     { label: "Dashboard", href: "#dashboard" },
@@ -39,12 +46,30 @@ const Navigation = () => {
 
           {/* Desktop CTA */}
           <div className="hidden md:flex items-center gap-4">
-            <Button variant="ghost" className="text-foreground hover:text-primary">
-              Sign In
-            </Button>
-            <Button className="bg-gradient-primary hover:shadow-glow transition-all duration-300">
-              Get Started
-            </Button>
+            {user ? (
+              <>
+                <span className="text-sm text-muted-foreground">
+                  Welcome, {user.email}
+                </span>
+                <Button 
+                  variant="ghost" 
+                  onClick={handleSignOut}
+                  className="text-foreground hover:text-primary"
+                >
+                  <LogOut className="w-4 h-4 mr-2" />
+                  Sign Out
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button variant="ghost" asChild className="text-foreground hover:text-primary">
+                  <Link to="/auth">Sign In</Link>
+                </Button>
+                <Button asChild className="bg-gradient-primary hover:shadow-glow transition-all duration-300">
+                  <Link to="/auth">Get Started</Link>
+                </Button>
+              </>
+            )}
           </div>
 
           {/* Mobile menu button */}
@@ -73,12 +98,30 @@ const Navigation = () => {
                 </a>
               ))}
               <div className="flex flex-col gap-2 pt-4 border-t border-border/50">
-                <Button variant="ghost" className="justify-start">
-                  Sign In
-                </Button>
-                <Button className="bg-gradient-primary">
-                  Get Started
-                </Button>
+                {user ? (
+                  <>
+                    <span className="text-sm text-muted-foreground px-3 py-2">
+                      Welcome, {user.email}
+                    </span>
+                    <Button 
+                      variant="ghost" 
+                      onClick={handleSignOut}
+                      className="justify-start"
+                    >
+                      <LogOut className="w-4 h-4 mr-2" />
+                      Sign Out
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <Button variant="ghost" asChild className="justify-start">
+                      <Link to="/auth">Sign In</Link>
+                    </Button>
+                    <Button asChild className="bg-gradient-primary">
+                      <Link to="/auth">Get Started</Link>
+                    </Button>
+                  </>
+                )}
               </div>
             </div>
           </div>
